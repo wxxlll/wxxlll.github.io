@@ -26,11 +26,13 @@
 <meta property="og:site_name" content="Hexo">
 <meta property="og:description" content="指数型枚举问题模型：$n$个数字，每个数字是$1 \sim m$，按字典序从小到大输出 例如：$n&#x3D;3$   $m&#x3D;4$ $1 1 1 1$ $1112$ $1113$ $…$ $4444$  代码实现1234567891011121314151617181920212223如果用普通的for循环来实现for(int i&#x3D;1 ; i&lt;&#x3D;m ; i++)&#123;">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/img/Grid.png">
 <meta property="article:published_time" content="2025-12-23T13:47:43.000Z">
-<meta property="article:modified_time" content="2026-01-06T13:51:22.877Z">
+<meta property="article:modified_time" content="2026-01-16T15:04:04.407Z">
 <meta property="article:author" content="John Doe">
 <meta property="article:tag" content="原创">
 <meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="http://example.com/img/Grid.png">
   
   
   
@@ -227,7 +229,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          883 字
+          1.7k 字
         
       </span>
     
@@ -238,7 +240,7 @@
         
         
         
-          8 分钟
+          15 分钟
         
       </span>
     
@@ -322,6 +324,36 @@
 <p>$2,2,3$</p>
 <p>思路：参考排列的思想，让每份数保持<strong>非降</strong>即可，多了一个总和的限制。</p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><code class="hljs C++"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;bits/stdc++.h&gt;</span></span><br><span class="hljs-keyword">using</span> <span class="hljs-keyword">namespace</span> std;<br><span class="hljs-type">int</span> x[<span class="hljs-number">200</span>],sum=<span class="hljs-number">0</span>,n,m;<br><span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">dfs</span><span class="hljs-params">(<span class="hljs-type">int</span> k,<span class="hljs-type">int</span> cnt)</span></span>&#123;<br>	<span class="hljs-keyword">if</span>(k&gt;m)&#123;      <span class="hljs-comment">// 如果没有数量限制  只有和的限制  把这个if删除即可</span><br>		<span class="hljs-keyword">if</span>(cnt==<span class="hljs-number">0</span>) sum++;<br>		<span class="hljs-keyword">return</span> ;<br>	&#125;<br>	<span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=x[k<span class="hljs-number">-1</span>];i&lt;=cnt;i++)&#123;<br>		x[k]=i;<br>		<span class="hljs-built_in">dfs</span>(k<span class="hljs-number">+1</span>,cnt-i);<br>	&#125;<br>&#125;<br><span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span>&#123;<br>	cin&gt;&gt;n&gt;&gt;m;<br>    x[<span class="hljs-number">0</span>]=<span class="hljs-number">1</span>;     <span class="hljs-comment">// 保持每份非空</span><br>	<span class="hljs-built_in">dfs</span>(<span class="hljs-number">1</span>,n); <br>	cout&lt;&lt;sum;<br>	<span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+
+
+<h2 id="dfs求连通块"><a href="#dfs求连通块" class="headerlink" title="dfs求连通块"></a>dfs求连通块</h2><h3 id="什么是连通块"><a href="#什么是连通块" class="headerlink" title="什么是连通块"></a>什么是连通块</h3><p>在二维网格（Grid）或图像中，连通块指的是一组相邻且具有相同属性（例如，值都为1）的单元格。在经典的“岛屿问题”中，我们通常将：</p>
+<ul>
+<li>值为 $1$ 的格子视为陆地</li>
+<li>值为 $0$ 的格子视为水域</li>
+</ul>
+<p>一个“岛屿”就是由若干个相互连接的陆地格子组成的连通块。</p>
+<p>（连通的规则具体题目具体分析，在这里的例子中上下左右相邻即为连通）</p>
+<p><img src="/img/Grid.png" srcset="/img/loading.gif" lazyload></p>
+<h3 id="算法流程"><a href="#算法流程" class="headerlink" title="算法流程"></a>算法流程</h3><p>深度优先搜索（Depth-First Search）是解决连通块问题的经典递归方法。其核心思想是“一条路走到黑，走不通再回头”：</p>
+<ol>
+<li>遍历网格中的每一个单元格。</li>
+<li>如果遇到一个未访问过的陆地格子（值为1），说明发现了一个新岛屿，岛屿计数$+1$。</li>
+<li>从这个格子开始DFS搜索：<ul>
+<li>将当前格子标记为已访问（使用visit数组）</li>
+<li>递归地访问其上、下、左、右 四个方向的相邻格子。</li>
+<li>如果相邻格子是未出地图边界的陆地格子且未被访问，则继续对其进行DFS探索。</li>
+</ul>
+</li>
+<li>一次完整的DFS会将整个岛屿的所有格子都标记为已访问，防止重复计数。</li>
+</ol>
+<p><strong>示例地图：</strong></p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs text">■ ■ □ □ □<br>■ □ ■ □ □<br>□ ■ ■ ■ □<br>□ □ □ □ ■<br>■ □ □ ■ ■<br></code></pre></td></tr></table></figure>
+
+<p><strong>搜索过程：</strong></p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><code class="hljs text">第1步：找到(1,1)的1，开始DFS<br>   访问(1,1) → 访问(1,2) → 访问(2,1)<br>   连通块#1：&#123;(1,1), (1,2), (2,1)&#125;<br><br>第2步：找到(1,2)的1，但已访问过，跳过<br><br>第3步：找到(2,1)的1，但已访问过，跳过（之后跳过的步骤就不一一赘述了）<br><br>第4步：找到(2,3)的1，开始DFS<br>   访问(2,3) → 访问(3,3) → 访问(3,2) → 访问(3,4) → 结束<br>   连通块#2：&#123;(2,3), (3,2), (3,3), (3,4)&#125;<br><br>第5步：找到(4,5)的1，开始DFS<br>   访问(4,5) → 访问(5,5) → 访问(5,4)<br>   连通块#3：&#123;(4,5), (5,5), (5,4)&#125;<br><br>第6步：找到(5,1)的1，开始DFS<br>   访问(5,1) → 结束<br>   连通块#4：&#123;(5,1)&#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="代码实现-3"><a href="#代码实现-3" class="headerlink" title="代码实现"></a>代码实现</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-meta">#<span class="hljs-keyword">include</span><span class="hljs-string">&lt;bits/stdc++.h&gt;</span></span><br><span class="hljs-keyword">using</span> <span class="hljs-keyword">namespace</span> std;<br><span class="hljs-type">int</span> n,m;<br><span class="hljs-type">int</span> vis[<span class="hljs-number">105</span>][<span class="hljs-number">105</span>],dir[<span class="hljs-number">4</span>][<span class="hljs-number">2</span>]=&#123;&#123;<span class="hljs-number">-1</span>,<span class="hljs-number">0</span>&#125;,&#123;<span class="hljs-number">1</span>,<span class="hljs-number">0</span>&#125;,&#123;<span class="hljs-number">0</span>,<span class="hljs-number">1</span>&#125;,&#123;<span class="hljs-number">0</span>,<span class="hljs-number">-1</span>&#125;&#125;;  <span class="hljs-comment">//假设地图是100*100</span><br><span class="hljs-type">int</span> maz[<span class="hljs-number">105</span>][<span class="hljs-number">105</span>];<br><span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">in</span><span class="hljs-params">(<span class="hljs-type">int</span> x,<span class="hljs-type">int</span> y)</span></span>&#123;    <span class="hljs-comment">// 判断是否出地图边界</span><br>	<span class="hljs-keyword">return</span> x&gt;=<span class="hljs-number">1</span> &amp;&amp; x&lt;=n &amp;&amp; y&gt;=<span class="hljs-number">1</span> &amp;&amp; y&lt;=m ;<br>&#125;<br><span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">dfs</span><span class="hljs-params">(<span class="hljs-type">int</span> x,<span class="hljs-type">int</span> y)</span></span>&#123;        <span class="hljs-comment">//当前点的位置</span><br>	vis[x][y]=<span class="hljs-number">1</span>;              <span class="hljs-comment">//把访问到的位置进行标记</span><br>	<span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=<span class="hljs-number">0</span>;<span class="hljs-built_in">i</span>&lt;<span class="hljs-number">4</span>;i++)&#123;     <span class="hljs-comment">//递归访问四个相邻的方向</span><br>		<span class="hljs-type">int</span> dx=dir[i][<span class="hljs-number">0</span>]+x;<br>		<span class="hljs-type">int</span> dy=dir[i][<span class="hljs-number">1</span>]+y;   <span class="hljs-comment">// (x,y)---&gt;(dx,dy)</span><br>		<span class="hljs-comment">// 1.没有越界  2.没有访问过（走过了没必要再走了） 3. 是陆地  </span><br>		<span class="hljs-keyword">if</span>(<span class="hljs-built_in">in</span>(dx,dy) &amp;&amp; f[dx][dy]==<span class="hljs-number">0</span> &amp;&amp; maz[dx][dy]==<span class="hljs-number">1</span> )&#123;<br>			<span class="hljs-built_in">dfs</span>(dx,dy);<br>		&#125;<br>	&#125;<br>&#125;<br><span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span>&#123;<br>	cin&gt;&gt;n&gt;&gt;m;<br>	<span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=<span class="hljs-number">1</span>;i&lt;=n;i++)&#123;<br>		<span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> j=<span class="hljs-number">1</span>;j&lt;=m;j++)&#123;<br>			cin&gt;&gt;maz[i][j];<br>		&#125; <br>	&#125;<br>	<span class="hljs-type">int</span> num=<span class="hljs-number">0</span>;   <span class="hljs-comment">//连通块数量</span><br>	<span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=<span class="hljs-number">1</span>;i&lt;=n;i++)&#123;<br>		<span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> j=<span class="hljs-number">1</span>;j&lt;=m;j++)&#123;<br>			<span class="hljs-keyword">if</span>( vis[i][j]==<span class="hljs-number">0</span> &amp;&amp; a[i][j]==<span class="hljs-number">1</span> )&#123;  <span class="hljs-comment">// 没有标记过 并且是陆地(1) ---&gt;说明是新的岛屿</span><br>				num++;            <span class="hljs-comment">// 连通块数量+1</span><br>				<span class="hljs-built_in">dfs</span>(i,j);         <span class="hljs-comment">// 从这个点开始dfs，标记整个连通块</span><br>			&#125;<br>		&#125;<br>	&#125;<br>	cout&lt;&lt;num;<br>	<span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>&#125;<br><br><br></code></pre></td></tr></table></figure>
 
 
                 
